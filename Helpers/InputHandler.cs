@@ -7,14 +7,17 @@ public static class InputHandler
 {
     public static readonly string BasePath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.Parent!.FullName;
     private static readonly string InputPath = Path.Combine(BasePath, "Input");
+    private static string InputPathDir(int year, int day) => Path.Combine(InputPath, year.ToString(), day.ToString());
 
     public static async Task<string> GetInputAsync(int year, int day)
     {
-        string inputPath = Path.Combine(InputPath, year.ToString(), day.ToString(), $"day_{day}_input.txt");
+        string inputPathDir = InputPathDir(year, day);
+        Directory.CreateDirectory(inputPathDir);
+
+        string inputPath = Path.Combine(inputPathDir, $"day_{day}_input.txt");
         if (File.Exists(inputPath))
             return File.ReadAllText(inputPath);
 
-        Directory.CreateDirectory(InputPath);
         try
         {
             Uri uri = new("https://adventofcode.com");
@@ -37,7 +40,7 @@ public static class InputHandler
 
     public static string GetTestInput(int year, int day)
     {
-        string testInputPath = Path.Combine(InputPath, year.ToString(), day.ToString(), $"day_{day}_test_input.txt");
+        string testInputPath = Path.Combine(InputPathDir(year, day), $"day_{day}_test_input.txt");
         if (File.Exists(testInputPath))
             return File.ReadAllText(testInputPath);
         return "Test input not found.";
@@ -45,10 +48,10 @@ public static class InputHandler
 
     public static void WriteTestInput(string input, int year, int day)
     {
-        string dayPath = Path.Combine(InputPath, year.ToString(), day.ToString());
-        Directory.CreateDirectory(dayPath);
+        string inputPathDir = InputPathDir(year, day);
+        Directory.CreateDirectory(inputPathDir);
 
-        string testInputPath = Path.Combine(dayPath, $"day_{day}_test_input.txt");
+        string testInputPath = Path.Combine(inputPathDir, $"day_{day}_test_input.txt");
         File.WriteAllText(testInputPath, input);
     }
 }
