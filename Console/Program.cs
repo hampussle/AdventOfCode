@@ -2,27 +2,22 @@
 using System.Diagnostics;
 
 string? input = "";
-DaysGenerator.GenerateDays();
 while (input != "exit")
 {
-    NewFrame();
-    Console.WriteLine("What day?");
-    input = Console.ReadLine()?.ToLower();
+    int year = AskForYear();
+    int day = AskForDay();
 
-    if (!int.TryParse(input, out int day) || day < 1 || day > 25)
-        continue;
-
-    var dayInstance = DaysGenerator.GetDay(day);
+    Day? dayInstance = DayProvider.GetDay(year, day);
     if (dayInstance is null)
         continue;
 
-    NewFrame(day);
+    NewFrame(year, day);
     DisplayInstructions();
 
     while (input != "exit")
     {
         input = Console.ReadLine()?.ToLower();
-        NewFrame(day);
+        NewFrame(year, day);
 
         switch (input)
         {
@@ -56,7 +51,7 @@ while (input != "exit")
                 PrintInput(true);
                 break;
             case "testwrite":
-                WriteInput(day);
+                WriteInput(year, day);
                 break;
             default:
                 break;
@@ -90,35 +85,66 @@ while (input != "exit")
     }
 }
 
-void WriteInput(int day)
+void WriteInput(int year, int day)
 {
     Console.WriteLine("Press 'Ctrl + Z' then ENTER to save.");
     Console.WriteLine("Test input:");
     string testInput = Console.In.ReadToEnd();
     if (string.IsNullOrWhiteSpace(testInput)) return;
-    InputHandler.WriteTestInput(testInput, day);
+    InputHandler.WriteTestInput(testInput, year, day);
 }
 
-void NewFrame(int day = 0)
+void EmptyFrame()
 {
     Console.Clear();
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("ADVENT OF CODE - 2015");
-    if (day != 0)
-    {
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"DAY {day}");
-    }
+    Console.WriteLine(" ADVENT OF CODE");
     Console.ForegroundColor = ConsoleColor.White;
+}
+
+void NewFrame(int year, int day)
+{
+    Console.Clear();
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($" ADVENT OF CODE - {year}");
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($" DAY {day}");
+    Console.ForegroundColor = ConsoleColor.White;
+}
+
+int AskForYear()
+{
+    int year;
+    while (!int.TryParse(input, out year) || year < 2015 || year > 2024)
+    {
+        EmptyFrame();
+        Console.WriteLine(" What year?");
+        input = Console.ReadLine()?.ToLower();
+    }
+    return year;
+}
+
+int AskForDay()
+{
+    int day;
+    while (!int.TryParse(input, out day) || day < 1 || day > 25)
+    {
+        EmptyFrame();
+        Console.WriteLine(" What day?");
+        input = Console.ReadLine()?.ToLower();
+    }
+    return day;
 }
 
 void DisplayInstructions()
 {
-    Console.WriteLine("* TEST to run solution for parts 1 & 2 using the test input.");
-    Console.WriteLine("* TEST {1 or 2} to run solution for selected part using the test input.");
-    Console.WriteLine("* RUN to run solution for parts 1 & 2 using the actual input.");
-    Console.WriteLine("* RUN {1 or 2} to get solution for selected part using the actual input.");
-    Console.WriteLine("* INPUT to see actual input from adventofcode.com.");
-    Console.WriteLine("* TESTINPUT to view saved test input.");
-    Console.WriteLine("* TESTWRITE to save test input.");
+    Console.WriteLine();
+    Console.WriteLine(" * TEST to run solution for parts 1 & 2 using the test input.");
+    Console.WriteLine(" * TEST {1 or 2} to run solution for selected part using the test input.");
+    Console.WriteLine(" * RUN to run solution for parts 1 & 2 using the actual input.");
+    Console.WriteLine(" * RUN {1 or 2} to get solution for selected part using the actual input.");
+    Console.WriteLine();
+    Console.WriteLine(" * INPUT to see actual input from adventofcode.com.");
+    Console.WriteLine(" * TESTINPUT to view saved test input.");
+    Console.WriteLine(" * TESTWRITE to save test input.");
 }

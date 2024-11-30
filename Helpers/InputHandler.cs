@@ -5,14 +5,16 @@ namespace Helpers;
 
 public static class InputHandler
 {
+    public static readonly string BasePath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.Parent!.FullName;
+    private static readonly string InputPath = Path.Combine(BasePath, "Input");
 
-    public static async Task<string> GetInputAsync(int day)
+    public static async Task<string> GetInputAsync(int year, int day)
     {
-        string inputFolder = Path.Combine(Directory.GetCurrentDirectory(), "Input", day.ToString());
-        string inputPath = Path.Combine(inputFolder, $"day_{day}_input.txt");
+        string inputPath = Path.Combine(InputPath, year.ToString(), day.ToString(), $"day_{day}_input.txt");
         if (File.Exists(inputPath))
             return File.ReadAllText(inputPath);
-        Directory.CreateDirectory(inputFolder);
+
+        Directory.CreateDirectory(InputPath);
         try
         {
             Uri uri = new("https://adventofcode.com");
@@ -22,7 +24,7 @@ public static class InputHandler
             cookies.Add(cookie);
             using HttpClientHandler handler = new() { CookieContainer = cookies };
             using HttpClient client = new(handler) { BaseAddress = uri };
-            string input = await client.GetStringAsync($"/2015/day/{day}/input");
+            string input = await client.GetStringAsync($"/{year}/day/{day}/input");
             File.WriteAllText(inputPath, input);
             return input;
         }
@@ -33,18 +35,20 @@ public static class InputHandler
         }
     }
 
-    public static string GetTestInput(int day)
+    public static string GetTestInput(int year, int day)
     {
-        string testInputPath = Path.Combine(Directory.GetCurrentDirectory(), "Input", day.ToString(), $"day_{day}_test_input.txt");
+        string testInputPath = Path.Combine(InputPath, year.ToString(), day.ToString(), $"day_{day}_test_input.txt");
         if (File.Exists(testInputPath))
             return File.ReadAllText(testInputPath);
         return "Test input not found.";
     }
 
-    public static void WriteTestInput(string input, int day)
+    public static void WriteTestInput(string input, int year, int day)
     {
-        string testInputPath = Path.Combine(Directory.GetCurrentDirectory(), "Input", day.ToString(), $"day_{day}_test_input.txt");
+        string dayPath = Path.Combine(InputPath, year.ToString(), day.ToString());
+        Directory.CreateDirectory(dayPath);
+
+        string testInputPath = Path.Combine(dayPath, $"day_{day}_test_input.txt");
         File.WriteAllText(testInputPath, input);
     }
-
 }
