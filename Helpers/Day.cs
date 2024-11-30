@@ -17,7 +17,7 @@ public abstract class Day
     public bool UseTestInput { get; set; }
     public string Input => UseTestInput ? InputHandler.GetTestInput(YearNumber, DayNumber)
                                         : InputHandler.GetInputAsync(YearNumber, DayNumber).Result;
-    public string[] SplitInput => Input.Split(Environment.NewLine).SkipLast(1).ToArray();
+    public string[] SplitInput => [.. Input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)];
 
     public virtual string PartOne() => "no answer";
     public virtual string PartTwo() => "no answer";
