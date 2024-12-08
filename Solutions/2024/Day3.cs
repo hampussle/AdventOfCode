@@ -6,8 +6,7 @@ namespace Solutions.Year2024;
 
 public class Day3(int year, int day) : Day(year, day)
 {
-
-    Regex MultRegex = new Regex("mul\\(([0-9]+),([0-9]+)\\)");
+    private readonly Regex MultRegex = new("mul\\(([0-9]+),([0-9]+)\\)");
 
     public override string PartOne()
     {
@@ -24,10 +23,8 @@ public class Day3(int year, int day) : Day(year, day)
 
     public override string PartTwo()
     {
-        bool isEnabled = true;
         StringBuilder inputBuilder = new();
-        StringBuilder disabledInputBuilder = new();
-        var matches = new List<Match>();
+        bool isEnabled = true;
 
         for (int i = 0; i < Input.Length; i++)
         {
@@ -41,12 +38,9 @@ public class Day3(int year, int day) : Day(year, day)
 
             if (isEnabled)
                 inputBuilder.Append(c);
-            else
-                disabledInputBuilder.Append(c);
         }
 
         string input = inputBuilder.ToString();
-        string disabledInput = disabledInputBuilder.ToString();
 
         int total = 0;
 
