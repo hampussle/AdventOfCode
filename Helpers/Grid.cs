@@ -34,6 +34,16 @@ public class Grid<T>
         }
     }
 
+    public Cell<T>? GetCell(int row, int column)
+    {
+        var key = (row, column);
+        if (grid.TryGetValue(key, out Cell<T>? value))
+        {
+            return value;
+        }
+        return default;
+    }
+
     public T? GetCellValue(int row, int column)
     {
         var key = (row, column);
@@ -48,9 +58,9 @@ public class Grid<T>
     {
         int rMax = grid.Max(x => x.Key.r);
         int cMax = grid.Max(x => x.Key.c);
-        for (int r = 0; r < rMax; r++)
+        for (int r = 0; r <= rMax; r++)
         {
-            for (int c = 0; c < cMax; c++)
+            for (int c = 0; c <= cMax; c++)
             {
                 Console.Write(grid[(r, c)].Value);
             }
@@ -106,6 +116,86 @@ public class Grid<T>
         if (grid.TryGetValue((row, column - 1), out Cell<T>? left))
             neighbors.Add(left);
         return neighbors.Where(condition).ToList();
+    }
+
+    public List<T> GetDiagonalLeftTop(int row, int column, bool inclusive)
+    {
+        List<T> diagonalValues = [];
+
+        if (!inclusive)
+        {
+            row--;
+            column--;
+        }
+
+        while (grid.TryGetValue((row, column), out Cell<T>? value))
+        {
+            diagonalValues.Add(value.Value);
+            row--;
+            column--;
+        }
+
+        return diagonalValues;
+    }
+
+    public List<T> GetDiagonalLeftBottom(int row, int column, bool inclusive)
+    {
+        List<T> diagonalValues = [];
+
+        if (!inclusive)
+        {
+            row++;
+            column--;
+        }
+
+        while (grid.TryGetValue((row, column), out Cell<T>? value))
+        {
+            diagonalValues.Add(value.Value);
+            row++;
+            column--;
+        }
+
+        return diagonalValues;
+    }
+
+    public List<T> GetDiagonalRightTop(int row, int column, bool inclusive)
+    {
+        List<T> diagonalValues = [];
+
+        if (!inclusive)
+        {
+            row--;
+            column++;
+        }
+
+        while (grid.TryGetValue((row, column), out Cell<T>? value))
+        {
+            diagonalValues.Add(value.Value);
+            row--;
+            column++;
+        }
+
+        return diagonalValues;
+    }
+
+    public List<T> GetDiagonalRightBottom(int row, int column, bool inclusive)
+    {
+        List<T> diagonalValues = [];
+
+        if (!inclusive)
+        {
+            row++;
+            column++;
+        }
+
+        while (grid.TryGetValue((row, column), out Cell<T>? value))
+        {
+            diagonalValues.Add(value.Value);
+            row++;
+            column++;
+        }
+
+        return diagonalValues;
     }
 
     public List<T> GetRowValues(int row)
