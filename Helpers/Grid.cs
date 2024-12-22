@@ -68,6 +68,20 @@ public class Grid<T>
         }
     }
 
+    public void PrintGrid(Func<T, string> toString)
+    {
+        int rMax = grid.Max(x => x.Key.r);
+        int cMax = grid.Max(x => x.Key.c);
+        for (int r = 0; r <= rMax; r++)
+        {
+            for (int c = 0; c <= cMax; c++)
+            {
+                Console.Write(toString(grid[(r, c)].Value));
+            }
+            Console.WriteLine();
+        }
+    }
+
     public List<Cell<T>> GetNeighboringCells(int row, int column)
     {
         List<Cell<T>> neighbors = [];
