@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace Helpers;
 
@@ -21,4 +22,5 @@ public static partial class StringExtensions
             str = str.Replace(s, string.Empty);
         return str;
     }
+    public static Point ToPoint(this IEnumerable<int> ints) => new Point(ints.First(), ints.Last());
 }
