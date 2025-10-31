@@ -22,5 +22,5 @@ public static partial class StringExtensions
             str = str.Replace(s, string.Empty);
         return str;
     }
-    public static Point ToPoint(this IEnumerable<int> ints) => new Point(ints.First(), ints.Last());
+    public static Point ToPoint(this IEnumerable<int> ints) => new(ints.First(), ints.Last());
 }

@@ -129,7 +129,7 @@ public class Grid<T>
             neighbors.Add(down);
         if (grid.TryGetValue((row, column - 1), out Cell<T>? left))
             neighbors.Add(left);
-        return neighbors.Where(condition).ToList();
+        return [.. neighbors.Where(condition)];
     }
 
     public List<T> GetDiagonalLeftTop(int row, int column, bool inclusive)

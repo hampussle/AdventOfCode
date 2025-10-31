@@ -41,9 +41,7 @@ public static class InputHandler
     public static string GetTestInput(int year, int day)
     {
         string testInputPath = Path.Combine(InputPathDir(year, day), $"day_{day}_test_input.txt");
-        if (File.Exists(testInputPath))
-            return File.ReadAllText(testInputPath);
-        return "Test input not found.";
+        return File.Exists(testInputPath) ? File.ReadAllText(testInputPath) : "Test input not found.";
     }
 
     public static void WriteTestInput(string input, int year, int day)
