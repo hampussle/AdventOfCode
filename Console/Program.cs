@@ -1,150 +1,116 @@
-﻿using Helpers;
-using System.Diagnostics;
+﻿using ConsoleApp;
+using Helpers;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 
-string? input = "";
-while (input != "exit")
+var yearOption = new Option<int>("--year", "-y")
 {
-    int year = AskForYear();
-    int day = AskForDay();
+    Description = "Specify the year (2015-2025)",
+    Required = true,
+};
+yearOption.AcceptOnlyFromAmong([.. Enumerable.Range(ConsoleHandler.MinYear, ConsoleHandler.MaxYear).Select(n => n.ToString())]);
 
-    Day? dayInstance = DayProvider.GetDay(year, day);
-    if (dayInstance is null)
-        continue;
+var dayOption = new Option<int>("--day", "-d")
+{
+    Description = "Specify the day (1-25)",
+    Required = true,
+};
+dayOption.AcceptOnlyFromAmong([.. Enumerable.Range(1, 25).Select(n => n.ToString())]);
 
-    NewFrame(year, day);
-    DisplayInstructions();
+var partOption = new Option<int?>("--part", "-p")
+{
+    Description = "Specify the part (1-2)",
+};
+partOption.AcceptOnlyFromAmong("1", "2");
 
-    while (input != "exit")
+var setInputOption = new Option<string>("--write", "-w")
+{
+    Description = "Set the test input",
+};
+
+var runCommand = new Command("run", "Runs the solution for the specified year and day")
+{
+    yearOption,
+    dayOption,
+    partOption,
+};
+
+var testCommand = new Command("test", "Runs the solution for the specified year and day on the test input")
+{
+    yearOption,
+    dayOption,
+    partOption,
+};
+
+var inputCommand = new Command("input", "Handle the test input for the specified year and day")
+{
+    yearOption,
+    dayOption,
+    setInputOption,
+};
+
+var generateCodeFilesCommand = new Command("template", "Generate code files for the specified year")
+{
+    yearOption,
+};
+
+testCommand.SetAction((parseResult) =>
+{
+    var year = parseResult.GetValue(yearOption);
+    var day = parseResult.GetValue(dayOption);
+    var part = parseResult.GetValue(partOption);
+
+    if (part == 1)
+        ConsoleHandler.TestPartOne(year, day);
+    else if (part == 2)
+        ConsoleHandler.TestPartTwo(year, day);
+    else
     {
-        input = Console.ReadLine()?.ToLower();
-        NewFrame(year, day);
-
-        switch (input)
-        {
-            case "help":
-                DisplayInstructions();
-                break;
-            case "test":
-                RunPartOne(true);
-                RunPartTwo(true);
-                break;
-            case "run":
-                RunPartOne(false);
-                RunPartTwo(false);
-                break;
-            case "test 1":
-                RunPartOne(true);
-                break;
-            case "test 2":
-                RunPartTwo(true);
-                break;
-            case "run 1":
-                RunPartOne(false);
-                break;
-            case "run 2":
-                RunPartTwo(false);
-                break;
-            case "input":
-                PrintInput(false);
-                break;
-            case "testinput":
-                PrintInput(true);
-                break;
-            case "testwrite":
-                WriteInput(year, day);
-                break;
-            default:
-                break;
-        }
+        ConsoleHandler.TestPartOne(year, day);
+        ConsoleHandler.TestPartTwo(year, day);
     }
+});
 
-    void RunPartOne(bool useTestInput)
+runCommand.SetAction((parseResult) =>
+{
+    var year = parseResult.GetValue(yearOption);
+    var day = parseResult.GetValue(dayOption);
+    var part = parseResult.GetValue(partOption);
+
+    if (part == 1)
+        ConsoleHandler.TestPartOne(year, day);
+    else if (part == 2)
+        ConsoleHandler.TestPartTwo(year, day);
+    else
     {
-        dayInstance.UseTestInput = useTestInput;
-        Stopwatch sw = Stopwatch.StartNew();
-        string answer = dayInstance.PartOne();
-        sw.Stop();
-        Console.WriteLine("\nPart one answer found in " + sw.ElapsedMilliseconds + " ms");
-        Console.WriteLine($"Part one answer: {answer}\n");
+        ConsoleHandler.TestPartOne(year, day);
+        ConsoleHandler.TestPartTwo(year, day);
     }
+});
 
-    void RunPartTwo(bool useTestInput)
-    {
-        dayInstance.UseTestInput = useTestInput;
-        Stopwatch sw = Stopwatch.StartNew();
-        string answer = dayInstance.PartTwo();
-        sw.Stop();
-        Console.WriteLine("\nPart two answer found in " + sw.ElapsedMilliseconds + " ms");
-        Console.WriteLine($"Part two answer: {answer}\n");
-    }
-
-    void PrintInput(bool useTestInput)
-    {
-        dayInstance.UseTestInput = useTestInput;
-        Console.WriteLine(dayInstance.Input);
-    }
-}
-
-void WriteInput(int year, int day)
+inputCommand.SetAction((parseResult) =>
 {
-    Console.WriteLine("Press 'Ctrl + Z' then ENTER to save.");
-    Console.WriteLine("Test input:");
-    string testInput = Console.In.ReadToEnd();
-    if (string.IsNullOrWhiteSpace(testInput)) return;
-    InputHandler.WriteTestInput(testInput, year, day);
-}
+    var year = parseResult.GetValue(yearOption);
+    var day = parseResult.GetValue(dayOption);
+    var input = parseResult.GetValue(setInputOption);
 
-void EmptyFrame()
-{
-    Console.Clear();
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine(" ADVENT OF CODE");
-    Console.ForegroundColor = ConsoleColor.White;
-}
+    if (input is string str)
+        InputHandler.WriteTestInput(str, year, day);
+    else
+        Console.WriteLine(InputHandler.GetTestInput(year, day));    
+});
 
-void NewFrame(int year, int day)
-{
-    Console.Clear();
-    Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine($" ADVENT OF CODE - {year}");
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine($" DAY {day}");
-    Console.ForegroundColor = ConsoleColor.White;
-}
+var root = new RootCommand("Advent of code CLI");
 
-int AskForYear()
-{
-    int year;
-    while (!int.TryParse(input, out year) || year < 2015 || year > 2024)
-    {
-        EmptyFrame();
-        Console.WriteLine(" What year?");
-        input = Console.ReadLine()?.ToLower();
-    }
-    return year;
-}
+root.Subcommands.Add(runCommand);
+root.Subcommands.Add(generateCodeFilesCommand);
+root.Subcommands.Add(inputCommand);
 
-int AskForDay()
-{
-    int day;
-    while (!int.TryParse(input, out day) || day < 1 || day > 25)
-    {
-        EmptyFrame();
-        Console.WriteLine(" What day?");
-        input = Console.ReadLine()?.ToLower();
-    }
-    return day;
-}
+var parsedResult = root.Parse(args);
+await parsedResult.InvokeAsync();
 
-void DisplayInstructions()
+foreach (ParseError parseError in parsedResult.Errors)
 {
-    Console.WriteLine();
-    Console.WriteLine(" * TEST to run solution for parts 1 & 2 using the test input.");
-    Console.WriteLine(" * TEST {1 or 2} to run solution for selected part using the test input.");
-    Console.WriteLine(" * RUN to run solution for parts 1 & 2 using the actual input.");
-    Console.WriteLine(" * RUN {1 or 2} to get solution for selected part using the actual input.");
-    Console.WriteLine();
-    Console.WriteLine(" * INPUT to see actual input from adventofcode.com.");
-    Console.WriteLine(" * TESTINPUT to view saved test input.");
-    Console.WriteLine(" * TESTWRITE to save test input.");
+    Console.Error.WriteLine(parseError.Message);
 }
