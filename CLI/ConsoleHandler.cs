@@ -57,6 +57,15 @@ public static class ConsoleHandler
         InputHandler.WriteTestInput(testInput, year, day);
     }
 
+    public static void SetApiKey(string key)
+    {
+        string contents = @$"{{
+    ""session"": ""{key}""
+}}";
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "appSettings.json");
+        File.WriteAllText(path, contents);
+    }
+
     private static void EmptyFrame()
     {
         Console.Clear();

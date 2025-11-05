@@ -4,8 +4,8 @@ public static class DayProvider
 {
     public static Day? GetDay(int year, int day)
     {
-        if (Type.GetType($"Solutions.Year{year}.Day{day}, Solutions") is Type dayType)
-            if (Activator.CreateInstance(dayType, [year, day]) is Day dayInstance)
+        if (Type.GetType($"Solutions.Year{year}.Day{day}, Solutions") is Type dayType &&
+            Activator.CreateInstance(dayType, [year, day]) is Day dayInstance)
                 return dayInstance;
         return null;
     }
