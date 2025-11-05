@@ -1,7 +1,8 @@
 ﻿using CLI.Commands;
-using ConsoleApp;
-using Helpers;
+using Spectre.Console;
 using Spectre.Console.Cli;
+
+AnsiConsole.MarkupLine("[green]Hello world![/]");
 
 var app = new CommandApp();
 
@@ -14,5 +15,7 @@ app.Configure(config =>
         .WithExample(["run", "2024", "1", "-t"]);
     config.AddCommand<SetApiKeyCommand>("set-api")
         .WithDescription("Set api key for fetching inputs.");
-    config.PropagateExceptions();
+    //config.PropagateExceptions();
 });
+
+Environment.ExitCode = await app.RunAsync(args);

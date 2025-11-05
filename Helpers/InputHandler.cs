@@ -6,6 +6,7 @@ namespace Helpers;
 public static class InputHandler
 {
     public static readonly string BasePath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.Parent!.FullName;
+    public static readonly string CliPath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
     private static readonly string InputPath = Path.Combine(BasePath, "Input");
     private static string InputPathDir(int year, int day) => Path.Combine(InputPath, year.ToString(), day.ToString());
 

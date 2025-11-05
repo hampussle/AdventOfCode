@@ -4,9 +4,9 @@ public abstract class Day
 {
     public Day(int year, int day)
     {
-        if (Constants.ValidYear(year))
+        if (!Constants.ValidYear(year))
             throw new ArgumentException($"Year needs to be between {Constants.MinYear} and {Constants.MaxYear}");
-        if (Constants.ValidDay(day))
+        if (!Constants.ValidDay(day))
             throw new ArgumentException("Day needs to be between 1 and 25");
         YearNumber = year;
         DayNumber = day;

@@ -23,9 +23,9 @@ internal class RunCommand : Command<RunCommand.Settings>
 
         public override ValidationResult Validate()
         {
-            if (Constants.ValidYear(Year))
+            if (!Constants.ValidYear(Year))
                 return ValidationResult.Error($"Year must be between {Constants.MinYear} and {Constants.MaxYear}.");
-            if (Constants.ValidDay(Day))
+            if (!Constants.ValidDay(Day))
                 return ValidationResult.Error($"Day must be between {Constants.MinDay} and {Constants.MaxDay}.");
 
             return ValidationResult.Success();
@@ -34,23 +34,26 @@ internal class RunCommand : Command<RunCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
-        var dayInstance = DayProvider.GetDay(settings.Year, settings.Day);
-        ArgumentNullException.ThrowIfNull(dayInstance);
-        dayInstance.UseTestInput = settings.UseTestInput;
+        var day = DayProvider.GetDay(settings.Year, settings.Day);
+        ArgumentNullException.ThrowIfNull(day);
+        day.UseTestInput = settings.UseTestInput;
+        ArgumentException.ThrowIfNullOrWhiteSpace(day.Input);
 
         var sw = System.Diagnostics.Stopwatch.StartNew();
-        string answer = dayInstance.PartOne();
+        string answer = day.PartOne();
         sw.Stop();
-        
-        AnsiConsole.MarkupLine($"\nPart one answer: {answer}\n");
-        AnsiConsole.MarkupLine($"\nPart one answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
+
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine($"Part one answer: {answer}");
+        AnsiConsole.MarkupLine($"Part one answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
+        AnsiConsole.WriteLine();
         
         sw.Restart();
-        answer = dayInstance.PartTwo();
+        answer = day.PartTwo();
         sw.Stop();
         
-        AnsiConsole.MarkupLine($"\nPart two answer: {answer}\n");
-        AnsiConsole.MarkupLine($"\nPart two answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
+        AnsiConsole.MarkupLine($"Part two answer: {answer}");
+        AnsiConsole.MarkupLine($"Part two answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
 
         return 0;
     }
