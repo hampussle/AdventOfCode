@@ -20,9 +20,6 @@ app.Configure(config =>
 Environment.ExitCode = await app.RunAsync(args);
 
 // TODO:
-// set --api, set --testinput, set --workingdirectory
-// executable name
-// styling and output
 // grid for "run" command output
 // elapsed time
 // template should add project file
