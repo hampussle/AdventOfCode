@@ -9,7 +9,7 @@ internal class TemplateCommand : Command<TemplateCommand.Settings>
 {
     public sealed class Settings : CommandSettings
     {
-        [Description($"Specify the year (2015-2025)")]
+        [Description($"Year (2015-2025)")]
         [CommandArgument(0, "<year>")]
         public int Year { get; init; }
 

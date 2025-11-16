@@ -53,4 +53,14 @@ public static class InputHandler
         string testInputPath = Path.Combine(inputPathDir, $"day_{day}_test_input.txt");
         File.WriteAllText(testInputPath, input);
     }
+
+    public static string SetApiKey(string key)
+    {
+        string contents = @$"{{
+    ""session"": ""{key}""
+}}";
+        string path = Path.Combine(CliPath, "appSettings.json");
+        File.WriteAllText(path, contents);
+        return path;
+    }
 }

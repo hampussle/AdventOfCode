@@ -13,7 +13,7 @@ internal class RunCommand : Command<RunCommand.Settings>
         [CommandArgument(0, "<year>")]
         public int Year { get; init; }
 
-        [Description($"Specify the day (1-25)")]
+        [Description($"Day between (1-25)")]
         [CommandArgument(1, "<day>")]
         public int Day { get; init; }
 
@@ -47,11 +47,11 @@ internal class RunCommand : Command<RunCommand.Settings>
         AnsiConsole.MarkupLine($"Part one answer: {answer}");
         AnsiConsole.MarkupLine($"Part one answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
         AnsiConsole.WriteLine();
-        
+
         sw.Restart();
         answer = day.PartTwo();
         sw.Stop();
-        
+
         AnsiConsole.MarkupLine($"Part two answer: {answer}");
         AnsiConsole.MarkupLine($"Part two answer found in [green]{sw.ElapsedMilliseconds} ms[/]");
 

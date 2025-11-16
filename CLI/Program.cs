@@ -1,8 +1,5 @@
 ﻿using CLI.Commands;
-using Spectre.Console;
 using Spectre.Console.Cli;
-
-AnsiConsole.MarkupLine("[green]Hello world![/]");
 
 var app = new CommandApp();
 

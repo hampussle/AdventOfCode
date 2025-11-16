@@ -1,5 +1,4 @@
-﻿using ConsoleApp;
-using Helpers;
+﻿using Helpers;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -10,7 +9,7 @@ internal class SetCommand : Command<SetCommand.Settings>
 {
     public sealed class Settings : CommandSettings
     {
-        [Description("Set the API key used for fetching input data.")]
+        [Description("Set the API key used for fetching input.")]
         [CommandOption("-a|--api [APIKEY]")]
         public string? ApiKey { get; set; }
 
@@ -18,11 +17,11 @@ internal class SetCommand : Command<SetCommand.Settings>
         [CommandOption("-t|--testinput [TESTINPUT]")]
         public string? TestInput { get; init; }
 
-        [Description("Year between 2015-2025")]
+        [Description("Year (2015-2025)")]
         [CommandArgument(0, "[YEAR]")]
         public int? Year { get; init; }
 
-        [Description("Day between 1-25")]
+        [Description("Day (1-25)")]
         [CommandArgument(1, "[DAY}")]
         public int? Day { get; init; }
 
@@ -37,7 +36,7 @@ internal class SetCommand : Command<SetCommand.Settings>
 
             if (TestInput is not null)
                 if (Year is null || Day is null)
-                    return ValidationResult.Error("Year and Day must be provided when setting test input.");
+                    return ValidationResult.Error("Year and day must be provided when setting test input.");
 
             return ValidationResult.Success();
         }
@@ -47,16 +46,16 @@ internal class SetCommand : Command<SetCommand.Settings>
     {
         if (settings.ApiKey is string apiKey)
         {
-            var path = ConsoleHandler.SetApiKey(apiKey);
+            var path = InputHandler.SetApiKey(apiKey);
             AnsiConsole.MarkupLine("[green]API key set[/]");
-            AnsiConsole.MarkupLine("");
-            AnsiConsole.MarkupLine($"[green]Key stored in:[/] [red]{path}[/]");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine($"[red]Key stored in:[/] {path}");
         }
 
         if (settings.TestInput is not null && settings.Year is int year && settings.Day is int day)
         {
             InputHandler.WriteTestInput(settings.TestInput, year, day);
-            AnsiConsole.MarkupLine($"[green]Test input set for year {year}, day {day}.[/]");
+            AnsiConsole.MarkupLine($"[green]Test input set for {year} - {day}.[/]");
         }
 
         if (settings.WorkingDirectory is not null)

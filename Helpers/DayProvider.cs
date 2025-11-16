@@ -6,7 +6,7 @@ public static class DayProvider
     {
         if (Type.GetType($"Solutions.Year{year}.Day{day}, Solutions") is Type dayType &&
             Activator.CreateInstance(dayType, [year, day]) is Day dayInstance)
-                return dayInstance;
+            return dayInstance;
         return null;
     }
 }
