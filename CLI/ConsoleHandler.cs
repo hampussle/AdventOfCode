@@ -25,7 +25,7 @@ public static class ConsoleHandler
         InputHandler.WriteTestInput(testInput, year, day);
     }
 
-    public static void SetApiKey(string key)
+    public static string SetApiKey(string key)
     {
         string contents = @$"{{
     ""session"": ""{key}""
@@ -34,5 +34,6 @@ public static class ConsoleHandler
         File.WriteAllText(path, contents);
         AnsiConsole.MarkupLine("[green]API key saved successfully![/]");
         AnsiConsole.MarkupLine($"path to API key: {path}");
+        return path;
     }
 }

@@ -15,9 +15,9 @@ internal class TemplateCommand : Command<TemplateCommand.Settings>
 
         public override ValidationResult Validate()
         {
-            return !Constants.ValidYear(Year)
-                ? ValidationResult.Error($"Year must be between {Constants.MinYear} and {Constants.MaxYear}.")
-                : ValidationResult.Success();
+            return Constants.ValidYear(Year) ?
+                ValidationResult.Success() :
+                ValidationResult.Error($"Year must be between {Constants.MinYear} and {Constants.MaxYear}.");
         }
     }
 

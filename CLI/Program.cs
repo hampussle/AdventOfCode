@@ -13,13 +13,19 @@ app.Configure(config =>
         .WithExample(["run", "2024", "1"])
         .WithExample(["run", "2024", "1", "--test"])
         .WithExample(["run", "2024", "1", "-t"]);
-    config.AddCommand<SetApiKeyCommand>("set-key")
-        .WithDescription("Set api key for fetching inputs.");
-    config.AddCommand<SetTestInputCommand>("set-test")
-        .WithDescription("Set test input for a specific day.");
+    config.AddCommand<SetCommand>("set")
+        .WithDescription("Configure working directory, test inputs and aoc api-key.");
     config.AddCommand<TemplateCommand>("template")
-        .WithDescription("Generate day template files for the specified year.");
+        .WithDescription("Generate template project for the specified year.");
     //config.PropagateExceptions();
 });
 
 Environment.ExitCode = await app.RunAsync(args);
+
+// TODO:
+// set --api, set --testinput, set --workingdirectory
+// executable name
+// styling and output
+// grid for "run" command output
+// elapsed time
+// template should add project file
