@@ -13,8 +13,12 @@ app.Configure(config =>
         .WithExample(["run", "2024", "1"])
         .WithExample(["run", "2024", "1", "--test"])
         .WithExample(["run", "2024", "1", "-t"]);
-    config.AddCommand<SetApiKeyCommand>("set-api")
+    config.AddCommand<SetApiKeyCommand>("set-key")
         .WithDescription("Set api key for fetching inputs.");
+    config.AddCommand<SetTestInputCommand>("set-test")
+        .WithDescription("Set test input for a specific day.");
+    config.AddCommand<TemplateCommand>("template")
+        .WithDescription("Generate day template files for the specified year.");
     //config.PropagateExceptions();
 });
 
