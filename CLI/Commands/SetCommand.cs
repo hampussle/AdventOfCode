@@ -22,7 +22,7 @@ internal class SetCommand : Command<SetCommand.Settings>
         public int? Year { get; init; }
 
         [Description("Day (1-25)")]
-        [CommandArgument(1, "[DAY}")]
+        [CommandArgument(1, "[DAY]")]
         public int? Day { get; init; }
 
         [Description("Path to working directory")]
