@@ -1,0 +1,18 @@
+using Helpers;
+
+namespace Solutions.Year2025;
+
+public class Day21(int year, int day) : Day(year, day)
+{
+
+    public override string PartOne()
+    {
+        return base.PartOne();
+    }
+
+    public override string PartTwo()
+    {
+        return base.PartTwo();
+    }
+
+}
