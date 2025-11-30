@@ -6,8 +6,9 @@ namespace Helpers;
 public static class InputHandler
 {
     public static readonly string BasePath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.Parent!.FullName;
-    public static readonly string CliPath = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
-    private static readonly string InputPath = Path.Combine(BasePath, "Input");
+    public static readonly string CliPath = Path.Combine(BasePath, "CLI");
+    public static readonly string SolutionsPath = Path.Combine(BasePath, "Solutions");
+    private static readonly string InputPath = Path.Combine(SolutionsPath, "Input");
     private static string InputPathDir(int year, int day) => Path.Combine(InputPath, year.ToString(), day.ToString());
 
     public static async Task<string> GetInputAsync(int year, int day)
@@ -42,7 +43,7 @@ public static class InputHandler
     public static string GetTestInput(int year, int day)
     {
         string testInputPath = Path.Combine(InputPathDir(year, day), $"day_{day}_test_input.txt");
-        return File.Exists(testInputPath) ? File.ReadAllText(testInputPath) : "Test input not found.";
+        return File.ReadAllText(testInputPath);
     }
 
     public static void WriteTestInput(string input, int year, int day)
