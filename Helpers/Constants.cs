@@ -9,4 +9,5 @@ public static class Constants
 
     public static bool ValidYear(int year) => year >= MinYear && year <= MaxYear;
     public static bool ValidDay(int day) => day >= MinDay && day <= MaxDay;
+    public static bool ValidDay(int year, int day) => ValidYear(year) && ValidDay(day);
 }
