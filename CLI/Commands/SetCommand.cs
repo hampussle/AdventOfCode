@@ -11,11 +11,11 @@ internal class SetCommand : Command<SetCommand.Settings>
     {
         [Description("Set the API key used for fetching input.")]
         [CommandOption("-a|--api [APIKEY]")]
-        public string? ApiKey { get; set; }
+        public FlagValue? ApiKey { get; set; }
 
         [Description("Set the test input to use when using command <run -t>")]
         [CommandOption("-t|--testinput [TESTINPUT]")]
-        public string? TestInput { get; init; }
+        public FlagValue? TestInput { get; init; }
 
         [Description("Year (2015-2025)")]
         [CommandArgument(0, "[YEAR]")]
@@ -25,14 +25,10 @@ internal class SetCommand : Command<SetCommand.Settings>
         [CommandArgument(1, "[DAY]")]
         public int? Day { get; init; }
 
-        [Description("Path to working directory")]
-        [CommandOption("-d|--workingdirectory [PATH]")]
-        public string? WorkingDirectory { get; init; }
-
         public override ValidationResult Validate()
         {
-            if (ApiKey is null && TestInput is null && WorkingDirectory is null)
-                return ValidationResult.Error("Either --api, --testinput, --homedir must be provided.");
+            if (ApiKey is null && TestInput is null)
+                return ValidationResult.Error("Either --api or --testinput must be provided.");
 
             if (TestInput is not null)
                 if (Year is null || Day is null)
@@ -44,25 +40,35 @@ internal class SetCommand : Command<SetCommand.Settings>
 
     public override int Execute(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
-        if (settings.ApiKey is string apiKey)
+        if (settings.ApiKey?.IsSet ?? false)
         {
-            var path = InputHandler.SetApiKey(apiKey);
-            AnsiConsole.MarkupLine("[green]API key set[/]");
-            AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[red]Key stored in:[/] {path}");
+            if (settings.ApiKey.Value is string apiKey)
+            {
+                var path = InputHandler.SetApiKey(apiKey);
+                AnsiConsole.MarkupLine("[green]API key set[/]");
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine($"[red]Key stored in:[/] {path}");
+            }
         }
 
-        if (settings.TestInput is not null && settings.Year is int year && settings.Day is int day)
+        if (settings.TestInput?.IsSet ?? false)
         {
-            InputHandler.WriteTestInput(settings.TestInput, year, day);
-            AnsiConsole.MarkupLine($"[green]Test input set for {year} - {day}.[/]");
-        }
-
-        if (settings.WorkingDirectory is not null)
-        {
-            // TODO
+            if (settings.TestInput?.Value is string testInput && settings.Year is int year && settings.Day is int day)
+            {
+                InputHandler.WriteTestInput(testInput, year, day);
+                AnsiConsole.MarkupLine($"[green]Test input set for {year} - {day}.[/]");
+            }
         }
 
         return 0;
     }
+}
+
+class FlagValue : IFlagValue
+{
+    public bool IsSet { get; set; }
+
+    public Type Type => typeof(string);
+
+    public object? Value { get; set; }
 }

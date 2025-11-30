@@ -11,7 +11,7 @@ app.Configure(config =>
         .WithExample(["run", "2024", "1", "--test"])
         .WithExample(["run", "2024", "1", "-t"]);
     config.AddCommand<SetCommand>("set")
-        .WithDescription("Configure working directory, test inputs and aoc api-key.");
+        .WithDescription("Configure test inputs and aoc api-key.");
     config.AddCommand<TemplateCommand>("template")
         .WithDescription("Generate template project for the specified year.");
     //config.PropagateExceptions();
