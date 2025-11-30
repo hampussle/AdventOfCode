@@ -24,7 +24,7 @@ public static partial class StringExtensions
                 str = str.Replace(s, string.Empty);
             return str;
         }
-        public IEnumerable<int> ExtractNumbers() => str.Where(char.IsNumber).Select(Convert.ToInt32);
+        public IEnumerable<int> ExtractNumbers() => str.Where(char.IsNumber).Select(c => int.Parse(c.ToString()));
     }
 
     extension(IEnumerable<char> chars)
@@ -37,6 +37,6 @@ public static partial class StringExtensions
         public Point ToPoint() => new(ints.First(), ints.Last());
         public IEnumerable<int> Odd() => ints.Where(i => i % 2 != 0);
         public IEnumerable<int> Even() => ints.Where(i => i % 2 == 0);
-        public long Product() => ints.Aggregate(1, (a, b) => a * b);
+        public long Product() => ints.Aggregate(1L, (a, b) => a * b);
     }
 }

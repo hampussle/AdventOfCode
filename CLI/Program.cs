@@ -22,4 +22,3 @@ Environment.ExitCode = await app.RunAsync(args);
 // TODO:
 // grid for "run" command output
 // elapsed time
-// template should add project file
