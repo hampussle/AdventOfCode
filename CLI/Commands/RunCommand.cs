@@ -39,6 +39,14 @@ internal class RunCommand : Command<RunCommand.Settings>
         day.UseTestInput = settings.UseTestInput;
         ArgumentException.ThrowIfNullOrWhiteSpace(day.Input);
 
+        AnsiConsole.Write(new Rule($"[bold cyan]Advent of Code {settings.Year} - Day {settings.Day}[/]")
+        {
+            Justification = Justify.Center,
+            Border = BoxBorder.Ascii,
+            Style = new Style(foreground: Color.Cyan),
+            Title = $"[yellow]{(settings.UseTestInput ? "Using Test Input" : "Using Real Input")}[/]"
+        });
+
         var sw = System.Diagnostics.Stopwatch.StartNew();
         string answer = day.PartOne();
         sw.Stop();
