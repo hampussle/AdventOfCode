@@ -7,20 +7,36 @@ public static partial class StringExtensions
 {
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhiteSpaceRegex();
-    public static string NormalizeWhitespace(this string str) => WhiteSpaceRegex().Replace(str, " ");
-    public static string RemoveWhitespace(this string str) => WhiteSpaceRegex().Replace(str, string.Empty);
-    public static string ConcatChars(this IEnumerable<char> chars) => string.Concat(chars);
-    public static string RemoveFromString(this string str, params char[] chars)
+
+    extension(string str)
     {
-        foreach (char c in chars)
-            str = str.Replace(c.ToString(), string.Empty);
-        return str;
+        public string NormalizeWhitespace() => WhiteSpaceRegex().Replace(str, " ");
+        public string RemoveWhitespace() => WhiteSpaceRegex().Replace(str, string.Empty);
+        public string RemoveFromString(params char[] chars)
+        {
+            foreach (char c in chars)
+                str = str.Replace(c.ToString(), string.Empty);
+            return str;
+        }
+        public string RemoveFromString(params string[] strings)
+        {
+            foreach (string s in strings)
+                str = str.Replace(s, string.Empty);
+            return str;
+        }
+        public IEnumerable<int> ExtractNumbers() => str.Where(char.IsNumber).Select(Convert.ToInt32);
     }
-    public static string RemoveFromString(this string str, params string[] strings)
+
+    extension(IEnumerable<char> chars)
     {
-        foreach (string s in strings)
-            str = str.Replace(s, string.Empty);
-        return str;
+        public string ConcatChars() => string.Concat(chars);
     }
-    public static Point ToPoint(this IEnumerable<int> ints) => new(ints.First(), ints.Last());
+
+    extension(IEnumerable<int> ints)
+    {
+        public Point ToPoint() => new(ints.First(), ints.Last());
+        public IEnumerable<int> Odd() => ints.Where(i => i % 2 != 0);
+        public IEnumerable<int> Even() => ints.Where(i => i % 2 == 0);
+        public long Product() => ints.Aggregate(1, (a, b) => a * b);
+    }
 }
