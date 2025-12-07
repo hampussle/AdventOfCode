@@ -1,5 +1,4 @@
 using Helpers;
-using System.Runtime.CompilerServices;
 
 namespace Solutions.Year2025;
 
@@ -38,29 +37,30 @@ public class Day6(int year, int day) : Day(year, day)
 
     public override string PartTwo()
     {
-        List<List<int>> numbers = [];
-        int outerColumn = 0;
-        numbers.Add([]);
-        for (int col = SplitInput.Max(line => line.Length) - 1; col >= 0; col--)
-        {
-            if (SplitInput.All(line => line.Length <= col || line[col] == ' '))
-            {
+        long total = 0L;
+        List<int> numbers = [];
 
-            }
-            string number = "";
-            for (int row = 0; row < SplitInput.Length; row++)
+        for (int i = SplitInput[0].Length - 1; i > -1; i--)
+        {
+            if (SplitInput.All(line => line[i] == ' '))
+                continue;
+
+            char op = SplitInput.Last()[i];
+            int number = int.Parse(SplitInput.Select(line => line[i]).Where(char.IsNumber).ConcatChars());
+            numbers.Add(number);
+            if (op == '*')
             {
-                string? line = SplitInput[row];
-                if (line.Length <= col)
-                    continue;
-                var c = line[col];
-                if (c == ' ')
-                    continue;
-                numbers[row].Add(int.Parse(c.ToString()));
+                total += numbers.Aggregate(1L, (acc, val) => acc * val);
+                numbers.Clear();
             }
-            if (!string.IsNullOrWhiteSpace(number))
-                numbers[outerColumn].Add(int.Parse(number));
+            else if (op == '+')
+            {
+                total += numbers.Sum();
+                numbers.Clear();
+            }
         }
+
+        return total.ToString();
     }
 
 }
