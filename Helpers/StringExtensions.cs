@@ -29,7 +29,7 @@ public static partial class StringExtensions
 
     extension(IEnumerable<char> chars)
     {
-        public string ConcatChars() => string.Concat(chars);
+        public string ConcatChars() => chars.Count() == 0 ? string.Empty : string.Concat(chars);
     }
 
     extension(IEnumerable<int> ints)

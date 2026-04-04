@@ -20,6 +20,18 @@ public class Grid<T>
         grid = [];
     }
 
+    public Grid(Grid<T> grid)
+    {
+        this.grid = [];
+        for (int row = 0; row < grid.RMax; row++)
+            for (int col = 0; col <= grid.CMax; col++)
+            {
+                var cell = grid.GetCell(row, col);
+                if (cell != null)
+                    SetCellValue(row, col, cell.Value);
+            }
+    }
+
     public void SetCellValue(int row, int column, T value)
     {
         var key = (row, column);

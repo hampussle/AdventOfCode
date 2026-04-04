@@ -1,4 +1,5 @@
 using Helpers;
+using Microsoft.Z3;
 
 namespace Solutions.Year2025;
 
@@ -64,7 +65,7 @@ public class Day10(int year, int day) : Day(year, day)
 
     public override string PartTwo()
     {
-        var wiring = SplitInput
+        var buttons = SplitInput
             .Select(line =>
                 line
                 .Split('(', ')')
@@ -76,56 +77,59 @@ public class Day10(int year, int day) : Day(year, day)
                 .ToArray())
             .ToArray();
 
-        var joltage = SplitInput
+        var joltages = SplitInput
             .Select(line =>
-                line
-                .SkipWhile(c => c != '{')
-                .Skip(1)
-                .TakeWhile(c => c != '}')
-                .ConcatChars()
-                .Split(',')
-                .Select(int.Parse)
-                .ToArray())
+            {
+                var start = line.IndexOf('{');
+                var end = line.IndexOf('}');
+                return line.Substring(start + 1, end - start - 1)
+                    .Split(',')
+                    .Select(int.Parse)
+                    .ToArray();
+            })
             .ToArray();
 
         long result = 0;
-        for (int i = 0; i < joltage.Length; i++)
+        for (int i = 0; i < buttons.Length; i++)
         {
-            var goal = joltage[i];
-            var start = new int[goal.Length];
-            var buttons = wiring[i];
-            Queue<(int[], int, int[])> buttonPresses = new();
-            foreach (int[] button in buttons)
-                buttonPresses.Enqueue((button, 0, start));
-            while (buttonPresses.TryDequeue(out var buttonPress))
+            var goal = joltages[i];
+            var buttonOptions = buttons[i];
+
+            using var ctx = new Context();
+            using var opt = ctx.MkOptimize();
+
+            var presses = Enumerable.Range(0, buttonOptions.Length)
+                .Select(j => ctx.MkIntConst($"p{j}"))
+                .ToArray();
+
+            foreach (var press in presses)
+                opt.Add(ctx.MkGe(press, ctx.MkInt(0)));
+
+            for (int counter = 0; counter < goal.Length; counter++)
             {
-                var (button, tryCount, state) = buttonPress;
-                var nextState = PressButton(button, state);
-                if (!ValidState(goal, nextState))
-                    continue;
-                tryCount += 1;
-                if (nextState.SequenceEqual(goal))
+                var affecting = Enumerable.Range(0, buttonOptions.Length)
+                    .Where(j => buttonOptions[j].Contains(counter))
+                    .Select(j => presses[j])
+                    .ToArray();
+
+                if (affecting.Length > 0)
                 {
-                    Console.WriteLine($"{tryCount} steps");
-                    result += tryCount;
-                    break;
+                    ArithExpr sum = affecting.Length == 1 ? affecting[0] : ctx.MkAdd(affecting);
+                    opt.Add(ctx.MkEq(sum, ctx.MkInt(goal[counter])));
                 }
-                foreach (int[] b in buttons)
-                    buttonPresses.Enqueue((b, tryCount, nextState));
+                else if (goal[counter] > 0)
+                    return "0";
             }
 
-            static int[] PressButton(int[] button, int[] joltage) => [.. joltage.Select((b, i) => button.Contains(i) ? b + 1 : b)];
+            opt.MkMinimize(presses.Length == 1 ? presses[0] : ctx.MkAdd(presses));
+            opt.Check();
+
+            var model = opt.Model;
+            var machineResult = presses.Sum(p => ((IntNum)model.Evaluate(p, true)).Int64);
+            result += machineResult;
         }
 
         return result.ToString();
-
-        static bool ValidState(int[] goal, int[] nextState)
-        {
-            for (int j = 0; j < nextState.Length; j++)
-                if (nextState[j] > goal[j])
-                    return false;
-            return true;
-        }
     }
 
 }
